@@ -113,7 +113,34 @@ results_df %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
-
 ## Problem 2
 
 ## Problem 3
+load the data set
+```{r}
+set.seed(10)
+
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
+```
+write function
+```{r}
+fill_in_missing = function(x){
+  
+  if(is.numeric(x)){
+    x = replace(x, is.na(x), mean(x, na.rm = TRUE))
+  }
+  else if(is.character(x)){
+    x = replace(x, is.na(x), "virginica")
+  }
+  
+  return(x)
+}
+```
+fill in missing value with this function
+```{r}
+result =  map_dfr(iris_with_missing, fill_in_missing)
+result
+```
+
