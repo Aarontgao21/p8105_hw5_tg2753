@@ -114,6 +114,34 @@ results_df %>%
 ```
 
 ## Problem 2
+```{r message=FALSE, warning=FALSE}
+df = tibble(path = list.files("./data")) %>% 
+    mutate(
+    path = str_c("./data/", path),
+    data = map(path, read_csv)) %>% 
+  unnest(data) %>%
+  mutate(
+    arm = str_sub(path, start = 8,end = 10),
+    subject_id = str_sub(path, start = 12,end = 13)) %>% 
+    select(-path)%>%
+    pivot_longer(
+    week_1:week_8,
+    names_to = "n_week",
+    values_to = "observation")
+df
+```
+make spaghetti plot
+```{r}
+df %>% 
+  group_by(subject_id) %>% 
+  ggplot(aes(x = n_week, y = observation, group = subject_id, color = arm)) +
+  geom_point() +
+  geom_path() +
+  labs(x = "Week",
+       y = "Observations",
+       title = " Observations On Each Subject Over Time")
+```
+it is clear that the observation value for experiment arm is larger than the value in control arm on average.
 
 ## Problem 3
 load the data set
